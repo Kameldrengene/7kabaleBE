@@ -1,45 +1,48 @@
 from flask import Flask, request
-from flask_restful import Resource, Api, fields, marshal_with
+from flask_restful import Resource, Api
 import turnGen.SolitareChecker as SolitareChecker
 from turnGen.objects.Gameboard import Gameboard
 
 app = Flask(__name__)
 api = Api(app)
 
-card_fields = {
-    "type": fields.Integer,
-    "value": fields.Integer
-}
+def gameboardEncoder(gameboard):
+    dict = {
+        "deckpointer": gameboard.deckPointer,
+        "finSpaceConverter": gameboard.finSpaceConverter,
+        "deck": [],
+        "spaces": []
+    }
 
-pile_fields = {
-    "shownCards": fields.List(card_fields),
-    "hiddenCards": fields.List(card_fields)
-}
+    for card in gameboard.deck:
+        dict["deck"].append({"type": card.type, "value": card.value})
 
-gameboard_fields = {
-    "dekpointer": fields.Integer,
-    "deck": fields.List(card_fields),
-    "spaces": fields.List(pile_fields),
-}
+    for pile in gameboard.spaces:
+        pileDict = {
+            "shownCards": [],
+            "hiddenCards": []
+        }
+        for card in pile.shownCards:
+            pileDict["shownCards"].append({"type": card.type, "value": card.value})
 
-gameboard_fields["finSpaces"]["a"] = fields.List(card_fields, attribute="a")
-gameboard_fields["finSpaces"]["b"] = fields.List(card_fields, attribute="b")
-gameboard_fields["finSpaces"]["c"] = fields.List(card_fields, attribute="c")
-gameboard_fields["finSpaces"]["d"] = fields.List(card_fields, attribute="d")
+        for card in pile.hiddenCards:
+            pileDict["hiddenCards"].append({"type": card.type, "value": card.value})
 
-gameboard_fields["finSpaceConverter"]["0"] = fields.String(attribute="0")
-gameboard_fields["finSpaceConverter"]["1"] = fields.String(attribute="1")
-gameboard_fields["finSpaceConverter"]["2"] = fields.String(attribute="2")
-gameboard_fields["finSpaceConverter"]["3"] = fields.String(attribute="3")
+        dict["spaces"].append(pileDict)
+
+    for type in "a","b","c","d":
+        dict["finSpaces"][type] = []
+        for card in gameboard.finSpaces[type]:
+            dict["finSpaces"][type].append({"type": card.type, "value": card.value})
+
 
 class TurnGeneration(Resource):
     def post(self):
         gameboard = request.get_json()
         return {"check": SolitareChecker.checkSolitare(gameboard)}, 201
 
-    @marshal_with(gameboard_fields)
     def get(self):
-        return Gameboard()
+        return gameboardEncoder(Gameboard())
 
 
 api.add_resource(TurnGeneration, '/turn/')
