@@ -39,6 +39,8 @@ def gameboardEncoder(gameboard):
         for card in gameboard.finSpaces[type]:
             dict["finSpaces"][type].append({"type": card.type, "value": card.value})
 
+    return dict
+
 
 class TurnGeneration(Resource):
     def post(self):
