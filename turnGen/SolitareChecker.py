@@ -1,4 +1,4 @@
-from objects.Gameboard import Gameboard
+from turnGen.objects.Gameboard import Gameboard
 
 typeConverter = {0: "Spar",
                  1: "Hjerter",
