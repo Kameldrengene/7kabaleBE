@@ -11,7 +11,11 @@ def gameboardEncoder(gameboard):
         "deckpointer": gameboard.deckPointer,
         "finSpaceConverter": gameboard.finSpaceConverter,
         "deck": [],
-        "spaces": []
+        "spaces": [],
+        "finSpaces": {"a": [],
+                      "b": [],
+                      "c": [],
+                      "d": []}
     }
 
     for card in gameboard.deck:
