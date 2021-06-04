@@ -1,4 +1,4 @@
-from objects.Gameboard import Gameboard
+from turnGen.objects.Gameboard import Gameboard
 
 
 class GameController:

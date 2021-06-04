@@ -1,5 +1,5 @@
 from GameController import GameController
-from objects.Card import Card as Card2
+from turnGen.objects.Card import Card as Card2
 import AlgoChooser
 import InstructionConverter
 

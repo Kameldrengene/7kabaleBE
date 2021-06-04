@@ -1,5 +1,5 @@
 import copy
-from objects.Card import Card
+from turnGen.objects.Card import Card
 
 class Pile:
 

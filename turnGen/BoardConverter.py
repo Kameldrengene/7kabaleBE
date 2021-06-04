@@ -1,5 +1,5 @@
-from objects.Gameboard import Gameboard
-from objects.Card import Card
+from turnGen.objects.Gameboard import Gameboard
+from turnGen.objects.Card import Card
 
 def convertBoard(gameboard=Gameboard):
     for i in range(4):

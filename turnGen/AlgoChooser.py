@@ -1,6 +1,6 @@
-from objects.Gameboard import Gameboard
-from objects.Card import Card
-from objects.Pile import Pile
+from turnGen.objects.Gameboard import Gameboard
+from turnGen.objects.Card import Card
+from turnGen.objects.Pile import Pile
 
 
 def eval_board(gameboard):

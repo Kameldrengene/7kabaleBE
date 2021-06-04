@@ -1,6 +1,6 @@
 from BoardConverter import *
 from View import View
-from objects.Gameboard import Gameboard
+from turnGen.objects.Gameboard import Gameboard
 from GameController import GameController
 import AlgoChooser
 import SolitareChecker
