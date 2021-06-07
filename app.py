@@ -79,14 +79,21 @@ class TurnGeneration(Resource):
         gameboard = gameboardDecoder(request.get_json())
         check = SolitareChecker.checkSolitare(gameboard)
         if check != "OK":
-            return {"correct": False, "msg": check}, 401
+            return {"correct": False, "msg": check}, 406  # Not acceptable
         else:
             command = AlgoChooser.eval_board(gameboard)
             instructions = InstructionConverter.convertInstructions(command, gameboard)
-            return {"correct": True, "msg": instructions}, 200
+            return {"correct": True, "msg": instructions}, 200  # OK
+
+
+class ImgRecon(Resource):
+    def post(self):
+        b64 = request.get_json()["img"]
+        return gameboardEncoder(Gameboard())
 
 
 api.add_resource(TurnGeneration, '/turn/')
+api.add_resource(ImgRecon, '/img/')
 
 if __name__ == '__main__':
     app.run(port=8080, debug=True)
