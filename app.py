@@ -5,6 +5,7 @@ from turnGen.objects.Card import Card
 from turnGen.objects.Pile import Pile
 from turnGen.objects.Gameboard import Gameboard
 import turnGen.AlgoChooser as AlgoChooser
+import turnGen.InstructionConverter as InstructionConverter
 import json
 
 app = Flask(__name__)
@@ -80,7 +81,9 @@ class TurnGeneration(Resource):
         if check != "OK":
             return {"correct": False, "msg": check}, 401
         else:
-            return {"correct": True, "msg": AlgoChooser.eval_board(gameboard)}, 200
+            command = AlgoChooser.eval_board(gameboard)
+            instructions = InstructionConverter.convertInstructions(command, gameboard)
+            return {"correct": True, "msg": instructions}, 200
 
 
 api.add_resource(TurnGeneration, '/turn/')
