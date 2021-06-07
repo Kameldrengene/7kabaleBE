@@ -18,6 +18,8 @@ class Gameboard:
 
         if gameboard is None:   # normal init with setup game
             self.setUpGame()
+        elif gameboard is int:
+            self.setUpClear()
         else:   # set gameboard as gameboard given
             self.finSpaces = copy.deepcopy(gameboard.finSpaces)
             self.deck = copy.deepcopy(gameboard.deck)
@@ -52,6 +54,14 @@ class Gameboard:
 
             self.spaces.append(Pile(shown, hidden))
 
+    def setUpClear(self):
+        self.finSpaces = {"a": [],
+                          "b": [],
+                          "c": [],
+                          "d": []}
+        self.deck = []
+        self.deckPointer = -1
+        self.spaces = []
 
     def draw(self):
         self.deckPointer += 1

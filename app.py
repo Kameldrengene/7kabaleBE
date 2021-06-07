@@ -1,6 +1,8 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 import turnGen.SolitareChecker as SolitareChecker
+from turnGen.objects.Card import Card
+from turnGen.objects.Pile import Pile
 from turnGen.objects.Gameboard import Gameboard
 import json
 
@@ -42,11 +44,37 @@ def gameboardEncoder(gameboard):
 
     return dict
 
+def gameboardDecoder(json):
+    gameboard = Gameboard(0)  # setup a clean gameboard
+
+    gameboard.deckPointer = json["deckPointer"]
+
+    for card in json["deck"]:
+        gameboard.deck.append(Card(card["type"], card["value"]))
+
+    for pile in json["spaces"]:
+
+        shownCards = []
+        hiddenCards = []
+
+        for card in pile["shownCards"]:
+            shownCards.append(Card(card["type"], card["value"]))
+
+        for card in pile["hiddenCards"]:
+            hiddenCards.append(Card(card["type"], card["value"]))
+
+        gameboard.spaces.append[Pile(shownCards, hiddenCards)]
+
+    for type in "a","b","c","d":
+        for card in json["finSpaces"][type]:
+            gameboard.finSpaces[type].append(Card(card["type"], card["value"]))
+
+    return gameboard
+
 
 class TurnGeneration(Resource):
     def post(self):
-        gameboard = json.loads(str(request.get_json()))
-        print(gameboard.deckPointer)
+        gameboard = gameboardDecoder(request.get_json())
         return {"check": SolitareChecker.checkSolitare(gameboard)}, 201
 
     def get(self):
