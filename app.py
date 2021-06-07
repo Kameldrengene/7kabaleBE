@@ -45,8 +45,10 @@ def gameboardEncoder(gameboard):
 
 class TurnGeneration(Resource):
     def post(self):
-        gameboard = json.load(request.get_json())
-        return {"check": SolitareChecker.checkSolitare(gameboard)}, 201
+        gameboard = request.get_json()
+        print(gameboard)
+        return gameboard
+        ## return {"check": SolitareChecker.checkSolitare(gameboard)}, 201
 
     def get(self):
         return gameboardEncoder(Gameboard())
