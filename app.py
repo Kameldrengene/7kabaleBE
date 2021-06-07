@@ -4,6 +4,7 @@ import turnGen.SolitareChecker as SolitareChecker
 from turnGen.objects.Card import Card
 from turnGen.objects.Pile import Pile
 from turnGen.objects.Gameboard import Gameboard
+import turnGen.AlgoChooser as AlgoChooser
 import json
 
 app = Flask(__name__)
@@ -75,10 +76,11 @@ def gameboardDecoder(json):
 class TurnGeneration(Resource):
     def post(self):
         gameboard = gameboardDecoder(request.get_json())
-        return {"check": SolitareChecker.checkSolitare(gameboard)}, 201
-
-    def get(self):
-        return gameboardEncoder(Gameboard())
+        check = SolitareChecker.checkSolitare(gameboard)
+        if check != "OK":
+            return {"correct": False, "msg": check}, 401
+        else:
+            return {"correct": True, "msg": AlgoChooser.eval_board(gameboard)}, 200
 
 
 api.add_resource(TurnGeneration, '/turn/')
