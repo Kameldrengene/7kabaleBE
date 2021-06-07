@@ -18,7 +18,7 @@ class Gameboard:
 
         if gameboard is None:   # normal init with setup game
             self.setUpGame()
-        elif gameboard == int:
+        elif gameboard == 0:
             self.setUpClear()
         else:   # set gameboard as gameboard given
             self.finSpaces = copy.deepcopy(gameboard.finSpaces)
