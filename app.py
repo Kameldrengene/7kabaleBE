@@ -11,7 +11,7 @@ api = Api(app)
 
 def gameboardEncoder(gameboard):
     dict = {
-        "deckpointer": gameboard.deckPointer,
+        "deckPointer": gameboard.deckPointer,
         "finSpaceConverter": gameboard.finSpaceConverter,
         "deck": [],
         "spaces": [],
@@ -63,7 +63,7 @@ def gameboardDecoder(json):
         for card in pile["hiddenCards"]:
             hiddenCards.append(Card(card["type"], card["value"]))
 
-        gameboard.spaces.append[Pile(shownCards, hiddenCards)]
+        gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
     for type in "a","b","c","d":
         for card in json["finSpaces"][type]:
