@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 import turnGen.SolitareChecker as SolitareChecker
 from turnGen.objects.Gameboard import Gameboard
+import json
 
 app = Flask(__name__)
 api = Api(app)
@@ -44,7 +45,7 @@ def gameboardEncoder(gameboard):
 
 class TurnGeneration(Resource):
     def post(self):
-        gameboard = request.get_json()
+        gameboard = json.load(request.get_json())
         return {"check": SolitareChecker.checkSolitare(gameboard)}, 201
 
     def get(self):
