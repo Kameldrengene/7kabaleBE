@@ -47,11 +47,14 @@ def gameboardEncoder(gameboard):
 def gameboardDecoder(json):
     gameboard = Gameboard(0)  # setup a clean gameboard
 
+    # setting deckpointer
     gameboard.deckPointer = json["deckPointer"]
 
+    # setting deck
     for card in json["deck"]:
         gameboard.deck.append(Card(card["type"], card["value"]))
 
+    # setting spaces with Piles
     for pile in json["spaces"]:
 
         shownCards = []
@@ -65,6 +68,7 @@ def gameboardDecoder(json):
 
         gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
+    # setting finSpaces
     for type in "a","b","c","d":
         for card in json["finSpaces"][type]:
             gameboard.finSpaces[type].append(Card(card["type"], card["value"]))
