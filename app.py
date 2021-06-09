@@ -2,24 +2,23 @@
 from flask import *
 from flask_restful import Resource, Api
 from datetime import datetime
-from syvkabale.syvkabaleBE.turnGen.objects.Gameboard import Gameboard
-from syvkabale.syvkabaleBE.turnGen.objects.Gameboard import Card
-from syvkabale.syvkabaleBE.turnGen.objects.Gameboard import Pile
-import syvkabale.syvkabaleBE.turnGen.SolitareChecker as SolitareChecker
-import syvkabale.syvkabaleBE.turnGen.InstructionConverter as InstructionConverter
-import syvkabale.syvkabaleBE.turnGen.AlgoChooser as AlgoChooser
+from turnGen.objects.Gameboard import Gameboard
+from turnGen.objects.Gameboard import Card
+from turnGen.objects.Gameboard import Pile
+import turnGen.SolitareChecker as SolitareChecker
+import turnGen.InstructionConverter as InstructionConverter
+import turnGen.AlgoChooser as AlgoChooser
 
 
 app = Flask(__name__)
 api = Api(app)
-
 
 def gameboardEncoder(gameboard):
     dict = {
         "deckPointer": gameboard.deckPointer,
         "finSpaceConverter": gameboard.finSpaceConverter,
         "deck": [],
-        "spaces": [],
+        "spaces": {},
         "finSpaces": {"a": [],
                       "b": [],
                       "c": [],
@@ -29,7 +28,9 @@ def gameboardEncoder(gameboard):
     for card in gameboard.deck:
         dict["deck"].append({"type": card.type, "value": card.value})
 
-    for pile in gameboard.spaces:
+    for i in range(len(gameboard.spaces)):
+        pile = gameboard.spaces[i]
+
         pileDict = {
             "shownCards": [],
             "hiddenCards": []
@@ -40,7 +41,7 @@ def gameboardEncoder(gameboard):
         for card in pile.hiddenCards:
             pileDict["hiddenCards"].append({"type": card.type, "value": card.value})
 
-        dict["spaces"].append(pileDict)
+        dict["spaces"][i] = pileDict
 
     for type in "a","b","c","d":
         dict["finSpaces"][type] = []
@@ -57,7 +58,9 @@ def gameboardDecoder(json):
     for card in json["deck"]:
         gameboard.deck.append(Card(card["type"], card["value"]))
 
-    for pile in json["spaces"]:
+    for i in range(len(json["spaces"])):
+
+        pile = json["spaces"][str(i)]
 
         shownCards = []
         hiddenCards = []
@@ -97,7 +100,7 @@ class ImgRecon(Resource):
         now = datetime.now()
         uploaded_file = request.files['file']
         if uploaded_file.filename != '':
-            uploaded_file.save(now.strftime("%d_%m_%Y-%H_%M_%S"))
+            uploaded_file.save("img/" + now.strftime("%d_%m_%Y-%H_%M_%S"))
             return gameboardEncoder(Gameboard()), 200
         else:
             return {"Error": True}, 404
@@ -123,5 +126,5 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="5000", debug=True)
+    app.run(host="0.0.0.0", port="5000")
 
