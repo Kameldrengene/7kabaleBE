@@ -19,10 +19,10 @@ def gameboardEncoder(gameboard):
         "finSpaceConverter": gameboard.finSpaceConverter,
         "deck": [],
         "spaces": {},
-        "finSpaces": {"a": [],
-                      "b": [],
-                      "c": [],
-                      "d": []}
+        "finSpaces": {0: [],
+                      1: [],
+                      2: [],
+                      3: []}
     }
 
     for card in gameboard.deck:
@@ -43,9 +43,9 @@ def gameboardEncoder(gameboard):
 
         dict["spaces"][i] = pileDict
 
-    for type in "a","b","c","d":
+    for type in range(4):
         dict["finSpaces"][type] = []
-        for card in gameboard.finSpaces[type]:
+        for card in gameboard.finSpaces[gameboard.finSpaceConverter[type]]:
             dict["finSpaces"][type].append({"type": card.type, "value": card.value})
 
     return dict
@@ -73,9 +73,9 @@ def gameboardDecoder(json):
 
         gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
-    for type in "a","b","c","d":
+    for type in range(4):
         for card in json["finSpaces"][type]:
-            gameboard.finSpaces[type].append(Card(card["type"], card["value"]))
+            gameboard.finSpaces[gameboard.finSpaceConverter[type]].append(Card(card["type"], card["value"]))
 
     return gameboard
 
@@ -101,7 +101,11 @@ class ImgRecon(Resource):
         uploaded_file = request.files['file']
         if uploaded_file.filename != '':
             uploaded_file.save("img/" + now.strftime("%d_%m_%Y-%H_%M_%S"))
-            return gameboardEncoder(Gameboard()), 200
+            gameboard = Gameboard()
+            for pile in gameboard.spaces:
+                for card in pile.hiddenCards:
+                    card.value = 14
+            return gameboardEncoder(gameboard), 200
         else:
             return {"Error": True}, 404
 
@@ -126,5 +130,5 @@ def upload_file():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port="5000")
+    app.run(host="0.0.0.0", port="5000", debug=True)
 
