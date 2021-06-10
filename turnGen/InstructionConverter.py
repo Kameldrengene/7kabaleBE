@@ -105,7 +105,10 @@ def convertInstructions(commands=[], gameboard=Gameboard):
             raise Exception("Command not convertible: {0}".format(command[0]))
 
     msg = ""
-    for i in range(len(msg_list)):
-        msg += "{0}. {1}\n".format(i+1, msg_list[i])
+    if len(msg_list) == 1:
+        msg += msg_list[0]
+    else:
+        for i in range(len(msg_list)):
+            msg += "{0}. {1}\n".format(i+1, msg_list[i])
 
     return msg
