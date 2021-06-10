@@ -53,8 +53,10 @@ def gameboardEncoder(gameboard):
 def gameboardDecoder(json):
     gameboard = Gameboard(0)  # setup a clean gameboard
 
+    # setting deckpointer
     gameboard.deckPointer = json["deckPointer"]
 
+    # setting deck
     for card in json["deck"]:
         gameboard.deck.append(Card(card["type"], card["value"]))
 
