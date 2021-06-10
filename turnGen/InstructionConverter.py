@@ -1,4 +1,6 @@
 from turnGen.objects.Gameboard import Gameboard
+import random
+from time import time
 
 typeConverter = {0: "Spar",
                  1: "Hjerter",
@@ -105,6 +107,13 @@ def convertInstructions(commands=[], gameboard=Gameboard):
             raise Exception("Command not convertible: {0}".format(command[0]))
 
     msg = ""
+    if gameboard.isWon():
+        random.seed(round(time()*1000))
+        if random.randint(1, 100) == 100:
+            msg += "Du er lidt en spade hvis du ikke kan løse kabalen herfra -Lasse 2021\n"
+        else:
+            msg += "Alle kort er tilgængelige og spillet er vundet\n"
+
     if len(msg_list) == 1:
         msg += msg_list[0]
     else:
