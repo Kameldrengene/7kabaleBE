@@ -26,6 +26,7 @@ def checkSolitare(gameboard):  # Should return a msg with what is wrong.
     * are cards in 2 places at once
       * watch out for if used in finspaces
     * is the board legal?
+      * piles with hiddencards, but not shown cards?
       * cards on top of each other correctly?
         * color
         * number
@@ -65,6 +66,9 @@ def checkSolitare(gameboard):  # Should return a msg with what is wrong.
     # Checking for legal board
     for i in range(len(gameboard.spaces)):
         pile = gameboard.spaces[i]
+        # no pile with unturned cards
+        if len(pile.shownCards) == 0 and len(pile.hiddenCards) != 0:
+            return "Fejl. Der er en eller flere bunker der ikke har fået et kort vendt."
         # correct ordering
         for j in range(len(pile.shownCards) - 1):
             k = pile.shownCards[j]  # simulates king

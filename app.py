@@ -74,7 +74,7 @@ def gameboardDecoder(json):
         gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
     for type in range(4):
-        for card in json["finSpaces"][type]:
+        for card in json["finSpaces"][str(type)]:
             gameboard.finSpaces[gameboard.finSpaceConverter[type]].append(Card(card["type"], card["value"]))
 
     return gameboard
@@ -85,11 +85,18 @@ class TurnGeneration(Resource):
         gameboard = gameboardDecoder(request.get_json())
         check = SolitareChecker.checkSolitare(gameboard)
         if check != "OK":
-            return {"correct": False, "msg": check}, 406  # Not acceptable
+            json_string = json.dumps({"correct": False, "msg": check},ensure_ascii = False)
+            #creating a Response object to set the content type and the encoding
+            response = Response(json_string,content_type="application/json; charset=utf-8" )
+            return response
         else:
             command = AlgoChooser.eval_board(gameboard)
             instructions = InstructionConverter.convertInstructions(command, gameboard)
-            return {"correct": True, "msg": instructions}, 200  # OK
+            json_string = json.dumps({"correct": True, "msg": instructions},ensure_ascii = False)
+            #creating a Response object to set the content type and the encoding
+            response = Response(json_string,content_type="application/json; charset=utf-8" )
+            return response
+            #return {"correct": True, "msg": msg}, 200  # OK
 
 
 class ImgRecon(Resource):
