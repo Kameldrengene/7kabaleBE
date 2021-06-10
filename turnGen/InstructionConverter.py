@@ -103,6 +103,10 @@ def convertInstructions(commands=[], gameboard=Gameboard):
             msg = "Træk et nyt kort fra bunken."
             msg_list.append(msg)
 
+        elif command[0] == "n":  # nothing to do
+            msg = "Ingen træk kan tages. Spillet er slut."
+            msg_list.append(msg)
+
         else:
             raise Exception("Command not convertible: {0}".format(command[0]))
 
