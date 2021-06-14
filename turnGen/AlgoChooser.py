@@ -60,9 +60,10 @@ def eval_board(gameboard):
         if isScorable(deckCard, gameboard):  # is card in deck scorable, then score
             return ["s q"]
 
+    if len(gameboard.deck) != 0:
+        return ["d"]
 
-
-    return ["d"]
+    return ["n"]
 
 
 def isScorable(card, gameboard):  # compares card to correct finspace to see if scorable

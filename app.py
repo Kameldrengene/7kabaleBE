@@ -1,32 +1,45 @@
-from flask import Flask, request
+# !flask/bin/python
+from flask import *
 from flask_restful import Resource, Api
-import turnGen.SolitareChecker as SolitareChecker
-from turnGen.objects.Card import Card
-from turnGen.objects.Pile import Pile
+from datetime import datetime
 from turnGen.objects.Gameboard import Gameboard
-import turnGen.AlgoChooser as AlgoChooser
+from turnGen.objects.Gameboard import Card
+from turnGen.objects.Gameboard import Pile
+import turnGen.SolitareChecker as SolitareChecker
 import turnGen.InstructionConverter as InstructionConverter
-import json
+import turnGen.AlgoChooser as AlgoChooser
+
 
 app = Flask(__name__)
 api = Api(app)
 
 def gameboardEncoder(gameboard):
+    """
+    * Encoder serializes the Gameboard object
+    * works by manually setting up the Gameboard object as a dictionary
+    """
+
+    # initial spots for serialization
+    # deckPointer and finSpaceConverter are instantly serializable
     dict = {
         "deckPointer": gameboard.deckPointer,
         "finSpaceConverter": gameboard.finSpaceConverter,
         "deck": [],
-        "spaces": [],
-        "finSpaces": {"a": [],
-                      "b": [],
-                      "c": [],
-                      "d": []}
+        "spaces": {},
+        "finSpaces": {0: [],
+                      1: [],
+                      2: [],
+                      3: []}
     }
 
+    # add all cards in gameboard.deck to the list
     for card in gameboard.deck:
         dict["deck"].append({"type": card.type, "value": card.value})
 
-    for pile in gameboard.spaces:
+    # serialize each pile one at a time
+    for i in range(len(gameboard.spaces)):
+        pile = gameboard.spaces[i]
+
         pileDict = {
             "shownCards": [],
             "hiddenCards": []
@@ -37,16 +50,23 @@ def gameboardEncoder(gameboard):
         for card in pile.hiddenCards:
             pileDict["hiddenCards"].append({"type": card.type, "value": card.value})
 
-        dict["spaces"].append(pileDict)
+        # Adding the serialized pile
+        dict["spaces"][i] = pileDict
 
-    for type in "a","b","c","d":
+    # Adding all finSpaces
+    for type in range(4):
         dict["finSpaces"][type] = []
-        for card in gameboard.finSpaces[type]:
+        for card in gameboard.finSpaces[gameboard.finSpaceConverter[type]]:
             dict["finSpaces"][type].append({"type": card.type, "value": card.value})
 
     return dict
 
 def gameboardDecoder(json):
+    """
+    * Decoder unserializes the Gameboard object
+    * works by manually setting up the Gameboard object with the values of the Json dictionary
+    """
+
     gameboard = Gameboard(0)  # setup a clean gameboard
 
     # setting deckpointer
@@ -56,8 +76,10 @@ def gameboardDecoder(json):
     for card in json["deck"]:
         gameboard.deck.append(Card(card["type"], card["value"]))
 
-    # setting spaces with Piles
-    for pile in json["spaces"]:
+    # setting spaces
+    for i in range(len(json["spaces"])):
+
+        pile = json["spaces"][str(i)]
 
         shownCards = []
         hiddenCards = []
@@ -70,27 +92,85 @@ def gameboardDecoder(json):
 
         gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
-    # setting finSpaces
-    for type in "a","b","c","d":
-        for card in json["finSpaces"][type]:
-            gameboard.finSpaces[type].append(Card(card["type"], card["value"]))
+    # setting the finSpaces
+    for type in range(4):
+        for card in json["finSpaces"][str(type)]:
+            gameboard.finSpaces[gameboard.finSpaceConverter[type]].append(Card(card["type"], card["value"]))
 
     return gameboard
 
 
 class TurnGeneration(Resource):
     def post(self):
+        """
+        * recives a gameboad in Json
+        * Decodes the gameboard
+        * checks the gamboard to see if it is legal
+        * returns either a false boolean and a error message
+        * or a true boolean and instructions for the next move
+        """
         gameboard = gameboardDecoder(request.get_json())
         check = SolitareChecker.checkSolitare(gameboard)
         if check != "OK":
-            return {"correct": False, "msg": check}, 401
+            # The gameboard is illegal
+            # setting the json return to have charset utf8 for acommadate the danish language
+            json_string = json.dumps({"correct": False, "msg": check}, ensure_ascii=False)
+            response = Response(json_string, content_type="application/json; charset=utf-8")
+            return response
         else:
+            # the gameboard is legal
+            # Algochooser evaluating the board for the best instruction sequence
             command = AlgoChooser.eval_board(gameboard)
+
+            # converting the instructions found to readable danish
             instructions = InstructionConverter.convertInstructions(command, gameboard)
-            return {"correct": True, "msg": instructions}, 200
+
+            # setting the json return to have charset utf8 for acommadate the danish language
+            json_string = json.dumps({"correct": True, "msg": instructions}, ensure_ascii=False)
+            response = Response(json_string, content_type="application/json; charset=utf-8")
+            return response
+
+
+class ImgRecon(Resource):
+    def get(self):
+        return render_template('upload.html')
+
+    def post(self):
+        now = datetime.now()
+        # retrieving the image sent from App
+        uploaded_file = request.files['file']
+        if uploaded_file.filename != '':
+            uploaded_file.save("img/" + now.strftime("%d_%m_%Y-%H_%M_%S.png"))
+
+            # temp returning a new gameboard object.
+            gameboard = Gameboard()
+            for pile in gameboard.spaces:
+                for card in pile.hiddenCards:
+                    card.value = 14
+            return gameboardEncoder(gameboard), 200
+        else:
+            return {"Error": True}, 404
 
 
 api.add_resource(TurnGeneration, '/turn/')
+api.add_resource(ImgRecon, '/')
+
+
+"""
+@app.route('/',methods=['GET'])
+def index():
+   return render_template('upload.html')
+
+@app.route('/', methods=['POST'])
+def upload_file():
+    now = datetime.now()
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        uploaded_file.save(now.strftime("%d_%m_%Y-%H_%M_%S"))
+        return jsonify("Board in her")
+"""
+
 
 if __name__ == '__main__':
-    app.run(port=8080, debug=True)
+    app.run(host="0.0.0.0", port="5000", debug=True)
+
