@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import PIL as Image
 import matplotlib.pyplot as plt
 
 # Load Yolo
@@ -13,7 +12,7 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
-img = cv2.imread("7kabale.jpg")
+img = cv2.imread("cropped2.png")
 img = cv2.resize(img, None, fx=0.4, fy=0.4)
 height, width, channels = img.shape
 
@@ -50,6 +49,10 @@ for out in outs:
 indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
 print(indexes)
 font = cv2.FONT_HERSHEY_PLAIN
+
+cards = []
+diff = 75
+
 for i in range(len(boxes)):
     if i in indexes:
         x, y, w, h = boxes[i]
@@ -57,11 +60,76 @@ for i in range(len(boxes)):
         color = colors[class_ids[i]]
         cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
         cv2.putText(img, label, (x, y + 30), font, 3, color, 3)
-        print("min", "max")
-        print((x, y))
-        print((x + w, y + h))
-        print("label: "+label)
+        cards.append((label, x, y))
 
+        # if len(cards) > 1:
+        for j in range(len(cards)):
+            if cards[j][0] == label:
+                if cards[j][1] < x:
+                    cards.pop()
+                    break
+                elif x < cards[j][1]:
+                    cards[j] = cards.pop()
+                    break
+
+                if cards[j][2] < y:
+                    cards.pop()
+                    break
+
+print("Cards:")
+print(cards)
+
+
+# take second element for sort
+def takeSecond(elem):
+    return elem[1]
+
+
+cards.sort(key=takeSecond)
+pilecoords = []
+xcoord = 0
+offset = 100  # ret værdien efter størrelsen af billedet
+exist = True
+
+for i in range(len(cards)):
+    if (xcoord < cards[i][1]):
+        xcoord = cards[i][1]
+        if len(pilecoords) == 0:
+            pilecoords.append(xcoord)
+
+        for j in range(len(pilecoords)):
+            if pilecoords[j] + offset < xcoord:
+                exist = False
+            else:
+                exist = True
+
+        if not exist:
+            pilecoords.append(xcoord)
+
+        exist = True
+
+print("Piles:")
+print(len(pilecoords))  # antal piles
+print(pilecoords)
+
+def takeThird(elem):
+    return elem[2]
+
+
+cards.sort(key=takeThird)
+
+piles = []
+for i in range(len(pilecoords)):
+    rightOff = pilecoords[i]+offset
+    leftOff = pilecoords[i]-offset
+    pile = []
+    for j in range(len(cards)):
+        if (cards[j][1] <= rightOff) and (cards[j][1] >= leftOff):
+            pile.append(cards[j])
+    piles.append(pile)
+
+print("Cards in Piles:")
+print(piles)
 plt.imshow(img)
 plt.show()
 cv2.waitKey(0)
