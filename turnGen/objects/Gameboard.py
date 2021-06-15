@@ -11,10 +11,10 @@ class Gameboard:
         self.deck = None
         self.deckPointer = None
         self.spaces = None
-        self.finSpaceConverter = {0: "a",
-                                  1: "b",
-                                  2: "c",
-                                  3: "d"}
+        self.finSpaceConverter = {0: "a", #spare
+                                  1: "b",#hjerter
+                                  2: "c",#klør
+                                  3: "d"}#roder
 
         if gameboard is None:   # normal init with setup game
             self.setUpGame()
@@ -42,7 +42,7 @@ class Gameboard:
         shuffle(self.deck)
 
         for i in range(7):
-            hidden = []
+            hidden = [] #Backside værdi -> 14
             shown = []
             for j in range(i+1):
                 if j == i:
