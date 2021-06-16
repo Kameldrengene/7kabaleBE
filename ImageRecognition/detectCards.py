@@ -3,16 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load Yolo
-net = cv2.dnn.readNet("ModelFiles/yolocards_608.weights", "ModelFiles/yolocards.cfg")
+net = cv2.dnn.readNet("ModelFiles/yolo-obj_new.weights", "ModelFiles/yolo-obj.cfg")
 classes = []
-with open("ModelFiles/cards.names", "r") as f:
+with open("ModelFiles/card.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
-img = cv2.imread("cropped2.png")
+img = cv2.imread("real.jpg")
 img = cv2.resize(img, None, fx=0.4, fy=0.4)
 height, width, channels = img.shape
 
@@ -60,7 +60,7 @@ for i in range(len(boxes)):
         color = colors[class_ids[i]]
         cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
         cv2.putText(img, label, (x, y + 30), font, 3, color, 3)
-        cards.append((label, x, y))
+        cards.append((label, x, y, w, h))
 
         # if len(cards) > 1:
         for j in range(len(cards)):
@@ -86,7 +86,49 @@ def takeSecond(elem):
 
 
 cards.sort(key=takeSecond)
+
 pilecoords = []
+deck = []
+finspaces = []
+
+# gnswidth = 0
+# gnsheight = 0
+# totalwidth = 0
+# totalheight = 0
+# for i in range(len(cards)):
+#     totalwidth += cards[i][3]
+#     totalheight+=cards[i][4]
+# gnswidth = int(totalwidth/len(cards))
+# gnsheight = int(totalheight/len(cards))
+
+deckXYmin = (0,0)
+deckXYmax = (int(width*1/3),int(height*1/3))
+finspacesXYmin = ((int(width*(1/3)))+100,0)
+finspacesXYmax = (width,int(height*(1/3)))
+
+length = len(cards)
+count = 0
+while count < length:
+    if cards[count][1] < deckXYmax[0] and cards[count][2] < deckXYmax[1]:
+        deck.append(cards[count])
+        cards.remove(cards[count])
+        length = length - 1
+        count = count - 1
+    if cards[count][1] > finspacesXYmin[0] and cards[count][2] < finspacesXYmax[1]:
+        finspaces.append(cards[count])
+        cards.remove(cards[count])
+        length = length - 1
+        count = count - 1
+    count = count + 1
+
+print("Deck:")
+print(deck)
+print("Finspaces:")
+print(finspaces)
+
+
+
+
 xcoord = 0
 offset = 100  # ret værdien efter størrelsen af billedet
 exist = True
