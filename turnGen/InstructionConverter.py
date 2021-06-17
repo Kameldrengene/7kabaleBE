@@ -1,3 +1,10 @@
+# Frederik Koefoed s195463  
+# Lasse Strunge s195486
+# Mark Mortensen s174881
+# Mikkel Danielsen s183913
+# Muhammad Talha s195475
+# Volkan Isik s180103
+
 from turnGen.objects.Gameboard import Gameboard
 import random
 from time import time
