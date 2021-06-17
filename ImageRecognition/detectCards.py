@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Load Yolo
-net = cv2.dnn.readNet("ModelFiles/yolo-obj_new.weights", "ModelFiles/yolo-obj.cfg")
+net = cv2.dnn.readNet("ModelFiles/last.weights", "ModelFiles/yolo-obj.cfg")
 classes = []
 with open("ModelFiles/card.names", "r") as f:
     classes = [line.strip() for line in f.readlines()]
@@ -12,7 +12,7 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
-img = cv2.imread("real.jpg")
+img = cv2.imread("fresh.jpeg")
 img = cv2.resize(img, None, fx=0.4, fy=0.4)
 height, width, channels = img.shape
 
@@ -64,7 +64,7 @@ for i in range(len(boxes)):
 
         # if len(cards) > 1:
         for j in range(len(cards)):
-            if cards[j][0] == label:
+            if cards[j][0] == label and cards[j][0] != "backside":
                 if cards[j][1] < x:
                     cards.pop()
                     break
@@ -91,15 +91,15 @@ pilecoords = []
 deck = []
 finspaces = []
 
-# gnswidth = 0
-# gnsheight = 0
-# totalwidth = 0
-# totalheight = 0
-# for i in range(len(cards)):
-#     totalwidth += cards[i][3]
-#     totalheight+=cards[i][4]
-# gnswidth = int(totalwidth/len(cards))
-# gnsheight = int(totalheight/len(cards))
+gnswidth = 0
+gnsheight = 0
+totalwidth = 0
+totalheight = 0
+for i in range(len(cards)):
+    totalwidth += cards[i][3]
+    totalheight+=cards[i][4]
+gnswidth = int(totalwidth/len(cards))
+gnsheight = int(totalheight/len(cards))
 
 deckXYmin = (0,0)
 deckXYmax = (int(width*1/3),int(height*1/3))
