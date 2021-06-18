@@ -166,7 +166,7 @@ api.add_resource(TurnGeneration, '/turn/')
 api.add_resource(ImgRecon, '/')
 
 
-"""
+
 @app.route('/',methods=['GET'])
 def index():
    return render_template('upload.html')
@@ -178,7 +178,7 @@ def upload_file():
     if uploaded_file.filename != '':
         uploaded_file.save(now.strftime("%d_%m_%Y-%H_%M_%S"))
         return jsonify("Board in her")
-"""
+
 
 
 if __name__ == '__main__':
