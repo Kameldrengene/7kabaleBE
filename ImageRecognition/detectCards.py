@@ -17,9 +17,9 @@ import turnGen.BoardConverter as BoardConverter
 class Detector:
     def detectSolitaire(self,path):
         # Load Yolo
-        net = cv2.dnn.readNet("ModelFiles/last.weights", "ModelFiles/yolo-obj.cfg")
+        net = cv2.dnn.readNet("/home/cdio/syvkabale/syvkabaleBE/ImageRecognition/ModelFiles/last.weights", "/home/cdio/syvkabale/syvkabaleBE/ImageRecognition/ModelFiles/yolo-obj.cfg")
         classes = []
-        with open("ModelFiles/card.names", "r") as f:
+        with open("/home/cdio/syvkabale/syvkabaleBE/ImageRecognition/ModelFiles/card.names", "r") as f:
             classes = [line.strip() for line in f.readlines()]
         layer_names = net.getLayerNames()
         output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
@@ -286,7 +286,7 @@ class Detector:
 
         for card in finspaces:
             # creates Card-object
-            newCard = Card(typeConverter[card[0][1]], valueConverter[card[0][0]])
+            newCard = Card(typeConverter[card[0][-1]], valueConverter[card[0][0]])
 
             # adding the card to the correct pile
             gameboard.finSpaces[gameboard.finSpaceConverter[newCard.type]].append(newCard)
