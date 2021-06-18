@@ -12,7 +12,7 @@ output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
 colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
 # Loading image
-img = cv2.imread("fresh.jpeg")
+img = cv2.imread("newnew.jpg")
 img = cv2.resize(img, None, fx=0.4, fy=0.4)
 height, width, channels = img.shape
 
@@ -95,11 +95,15 @@ gnswidth = 0
 gnsheight = 0
 totalwidth = 0
 totalheight = 0
+cardcount = 0
 for i in range(len(cards)):
-    totalwidth += cards[i][3]
-    totalheight+=cards[i][4]
-gnswidth = int(totalwidth/len(cards))
-gnsheight = int(totalheight/len(cards))
+    if cards[i][0] != 'backside':
+        totalwidth += cards[i][3]
+        totalheight+=cards[i][4]
+        cardcount = cardcount + 1
+
+gnswidth = int(totalwidth/cardcount)
+gnsheight = int(totalheight/cardcount)
 
 deckXYmin = (0,0)
 deckXYmax = (int(width*1/3),int(height*1/3))
@@ -121,8 +125,11 @@ while count < length:
         count = count - 1
     count = count + 1
 
+deck.sort(key=takeSecond)
 print("Deck:")
 print(deck)
+
+finspaces.sort(key=takeSecond)
 print("Finspaces:")
 print(finspaces)
 
@@ -130,7 +137,7 @@ print(finspaces)
 
 
 xcoord = 0
-offset = 100  # ret værdien efter størrelsen af billedet
+offset = 2* gnswidth  # ret værdien efter størrelsen af billedet
 exist = True
 
 for i in range(len(cards)):
@@ -154,6 +161,27 @@ print("Piles:")
 print(len(pilecoords))  # antal piles
 print(pilecoords)
 
+if len(pilecoords) > 7:
+    iarrangepilecoords = 0
+    lengtharrangepilecoords = len(pilecoords)-1
+    while iarrangepilecoords < lengtharrangepilecoords:
+        if pilecoords[iarrangepilecoords] > gnswidth:
+            pilecomp = pilecoords[iarrangepilecoords]
+            if pilecomp + gnswidth * 7.5 > pilecoords[iarrangepilecoords+1]:
+                pilecoords.remove(pilecoords[iarrangepilecoords+1])
+                iarrangepilecoords = iarrangepilecoords - 1
+                lengtharrangepilecoords = lengtharrangepilecoords - 1
+        else:
+            pilecoords.remove(pilecoords[iarrangepilecoords])
+            iarrangepilecoords = iarrangepilecoords - 1
+            lengtharrangepilecoords = lengtharrangepilecoords - 1
+        iarrangepilecoords = iarrangepilecoords + 1
+
+
+print("Piles:")
+print(len(pilecoords))  # antal piles
+print(pilecoords)
+
 def takeThird(elem):
     return elem[2]
 
@@ -170,10 +198,13 @@ for i in range(len(pilecoords)):
             pile.append(cards[j])
     piles.append(pile)
 
+
+
 print("Cards in Piles:")
 print(piles)
+print(gnswidth)
 plt.imshow(img)
 plt.show()
 cv2.imshow("cards",img)
-cv2.waitKey(60)
+cv2.waitKey(0)
 cv2.destroyAllWindows()

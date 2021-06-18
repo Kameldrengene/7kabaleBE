@@ -147,7 +147,7 @@ class ImgRecon(Resource):
         # retrieving the image sent from App
         uploaded_file = request.files['file']
         if uploaded_file.filename != '':
-            uploaded_file.save("img/" + now.strftime("%d_%m_%Y-%H_%M_%S.png"))
+            uploaded_file.save("img/" + now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
 
             # temp returning a new gameboard object.
             gameboard = Gameboard()
