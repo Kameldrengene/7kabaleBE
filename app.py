@@ -151,7 +151,8 @@ class ImgRecon(Resource):
 
             # temp returning a new gameboard object.
             detectorObj = Detector.Detector()
-            gameboard = detectorObj.detectSolitaire("../img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
+            #gameboard = detectorObj.detectSolitaire("/home/cdio/syvkabale/syvkabaleBE/img/1.jpg")
+            gameboard = detectorObj.detectSolitaire("/home/cdio/syvkabale/syvkabaleBE/img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
             # gameboard = detector.detectSolitaire(detectorObj,"../img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
             # gameboard = Gameboard()
             # for pile in gameboard.spaces:
