@@ -152,13 +152,12 @@ class ImgRecon(Resource):
 
             # temp returning a new gameboard object.
             detectorObj = Detector()
-            response = Detector.detectSolitaire(detectorObj,"../img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
+            gameboard = Detector.detectSolitaire(detectorObj,"../img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
             # gameboard = Gameboard()
             # for pile in gameboard.spaces:
             #     for card in pile.hiddenCards:
             #         card.value = 14
-            # return gameboardEncoder(gameboard), 200
-            return response
+            return gameboardEncoder(gameboard), 200
         else:
             return {"Error": True}, 404
 

@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-from app import gameboardEncoder
 from turnGen.objects.Card import Card
 from turnGen.objects.Gameboard import Gameboard
 from turnGen.objects.Pile import Pile
@@ -271,12 +270,12 @@ class Detector:
         # gameboard is now the Gameboard-object of the found solitaire
 
         # should return gameboard and be converted in app.py
-        json = gameboardEncoder(gameboard)
-        print(json)
+        # json = gameboardEncoder(gameboard)
+        # print(json)
 
         # plt.imshow(img)
         # plt.show()
         # cv2.imshow("cards", img)
         # cv2.waitKey(60)
         # cv2.destroyAllWindows()
-        return json
+        return gameboard
