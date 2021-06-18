@@ -15,7 +15,7 @@ from turnGen.objects.Gameboard import Pile
 import turnGen.SolitareChecker as SolitareChecker
 import turnGen.InstructionConverter as InstructionConverter
 import turnGen.AlgoChooser as AlgoChooser
-from ImageRecognition.detectCards import Detector
+# from ImageRecognition.detectCards import Detector
 
 
 app = Flask(__name__)
@@ -151,14 +151,14 @@ class ImgRecon(Resource):
             uploaded_file.save("img/" + now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
 
             # temp returning a new gameboard object.
-            detectorObj = Detector()
-            response = Detector.detectSolitaire(detectorObj,"../img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
+            # detectorObj = Detector()
+            # response = Detector.detectSolitaire(detectorObj,"../img/"+now.strftime("%d_%m_%Y-%H_%M_%S.jpg"))
             # gameboard = Gameboard()
             # for pile in gameboard.spaces:
             #     for card in pile.hiddenCards:
             #         card.value = 14
             # return gameboardEncoder(gameboard), 200
-            return response
+            # return response
         else:
             return {"Error": True}, 404
 
