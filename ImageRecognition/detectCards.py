@@ -26,8 +26,10 @@ class Detector:
         colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
         # Loading image
-        img = cv2.imread(path)
-        img = cv2.resize(img, None, fx=0.4, fy=0.4)
+        rawimg = cv2.imread(path)
+        img = cv2.rotate(rawimg, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+        img = cv2.resize(img, None, fx=1.0, fy=1.0)
         height, width, channels = img.shape
 
         # Detecting objects
@@ -74,15 +76,15 @@ class Detector:
                 color = colors[class_ids[i]]
                 cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
                 cv2.putText(img, label, (x, y + 30), font, 3, color, 3)
-                cards.append((label, x, y, w, h))
+                cards.append((label, x + (w / 2), y, w, h))
 
                 # if len(cards) > 1:
                 for j in range(len(cards)):
                     if cards[j][0] == label and cards[j][0] != "backside":
-                        if cards[j][1] < x:
+                        if cards[j][1] < x + (w / 2):
                             cards.pop()
                             break
-                        elif x < cards[j][1]:
+                        elif x + (w / 2) < cards[j][1]:
                             cards[j] = cards.pop()
                             break
 
@@ -92,6 +94,7 @@ class Detector:
 
         print("Cards:")
         print(cards)
+        print("height= " + str(height) + " and width=" + str(width))
 
         # take second element for sort
         def takeSecond(elem):
@@ -118,9 +121,9 @@ class Detector:
         gnsheight = int(totalheight / cardcount)
 
         deckXYmin = (0, 0)
-        deckXYmax = (int(width * 1 / 3), int(height * 1 / 3))
+        deckXYmax = (int(width * 1 / 3), int(height * 1 / 4))
         finspacesXYmin = ((int(width * (1 / 3))) + 100, 0)
-        finspacesXYmax = (width, int(height * (1 / 3)))
+        finspacesXYmax = (width, int(height * (1 / 4)))
 
         length = len(cards)
         count = 0
@@ -149,46 +152,61 @@ class Detector:
         offset = 2 * gnswidth  # ret værdien efter størrelsen af billedet
         exist = True
 
-        for i in range(len(cards)):
-            if (xcoord < cards[i][1]):
-                xcoord = cards[i][1]
-                if len(pilecoords) == 0:
-                    pilecoords.append(xcoord)
+        MarginWidth = (0.028 * width) * 2
+        pileboxwidth = (width - MarginWidth) / 7
+        pilecoords.append(((MarginWidth / 2) + 0.004 * width, (MarginWidth / 2) + 0.004 * width + pileboxwidth))
+        # cv2.line(img, (int(pilecoords[0][0]), int(height / 3)), (int(pilecoords[0][0]), int(height)), color=(0, 255, 0),
+        #          thickness=2)
+        # cv2.line(img, (int(pilecoords[0][1]), int(height / 3)), (int(pilecoords[0][1]), int(height)), color=(0, 255, 0),
+        #          thickness=2)
 
-                for j in range(len(pilecoords)):
-                    if pilecoords[j] + offset < xcoord:
-                        exist = False
-                    else:
-                        exist = True
+        for i in range(0, 6):
+            pilecoords.append((pilecoords[i][1], pilecoords[i][1] + pileboxwidth))
+            # cv2.line(img, (int(pilecoords[i + 1][0]), int(height / 3)), (int(pilecoords[i + 1][0]), int(height)),
+            #          color=(0, 255, 0),
+            #          thickness=2)
 
-                if not exist:
-                    pilecoords.append(xcoord)
-
-                exist = True
-
-        print("Piles:")
-        print(len(pilecoords))  # antal piles
-        print(pilecoords)
-
-        if len(pilecoords) > 7:
-            iarrangepilecoords = 0
-            lengtharrangepilecoords = len(pilecoords) - 1
-            while iarrangepilecoords < lengtharrangepilecoords:
-                if pilecoords[iarrangepilecoords] > gnswidth:
-                    pilecomp = pilecoords[iarrangepilecoords]
-                    if pilecomp + gnswidth * 7.5 > pilecoords[iarrangepilecoords + 1]:
-                        pilecoords.remove(pilecoords[iarrangepilecoords + 1])
-                        iarrangepilecoords = iarrangepilecoords - 1
-                        lengtharrangepilecoords = lengtharrangepilecoords - 1
-                else:
-                    pilecoords.remove(pilecoords[iarrangepilecoords])
-                    iarrangepilecoords = iarrangepilecoords - 1
-                    lengtharrangepilecoords = lengtharrangepilecoords - 1
-                iarrangepilecoords = iarrangepilecoords + 1
+        # for i in range(len(cards)):
+        #     if (xcoord < cards[i][1]):
+        #         xcoord = cards[i][1]
+        #         if len(pilecoords) == 0:
+        #             pilecoords.append(xcoord)
+        #
+        #         for j in range(len(pilecoords)):
+        #             if pilecoords[j] + offset < xcoord:
+        #                 exist = False
+        #             else:
+        #                 exist = True
+        #
+        #         if not exist:
+        #             pilecoords.append(xcoord)
+        #
+        #         exist = True
 
         print("Piles:")
         print(len(pilecoords))  # antal piles
         print(pilecoords)
+
+        #
+        # if len(pilecoords) > 7:
+        #     iarrangepilecoords = 0
+        #     lengtharrangepilecoords = len(pilecoords) - 1
+        #     while iarrangepilecoords < lengtharrangepilecoords:
+        #         if pilecoords[iarrangepilecoords] > gnswidth:
+        #             pilecomp = pilecoords[iarrangepilecoords]
+        #             if pilecomp + gnswidth * 7.5 > pilecoords[iarrangepilecoords + 1]:
+        #                 pilecoords.remove(pilecoords[iarrangepilecoords + 1])
+        #                 iarrangepilecoords = iarrangepilecoords - 1
+        #                 lengtharrangepilecoords = lengtharrangepilecoords - 1
+        #         else:
+        #             pilecoords.remove(pilecoords[iarrangepilecoords])
+        #             iarrangepilecoords = iarrangepilecoords - 1
+        #             lengtharrangepilecoords = lengtharrangepilecoords - 1
+        #         iarrangepilecoords = iarrangepilecoords + 1
+        #
+        # print("Piles:")
+        # print(len(pilecoords))  # antal piles
+        # print(pilecoords)
 
         def takeThird(elem):
             return elem[2]
@@ -196,12 +214,21 @@ class Detector:
         cards.sort(key=takeThird)
 
         piles = []
+        # for i in range(len(pilecoords)):
+        #     rightOff = pilecoords[i] + offset
+        #     leftOff = pilecoords[i] - offset
+        #     pile = []
+        #     for j in range(len(cards)):
+        #         if (cards[j][1] <= rightOff) and (cards[j][1] >= leftOff):
+        #             pile.append(cards[j])
+        #     piles.append(pile)
+
         for i in range(len(pilecoords)):
-            rightOff = pilecoords[i] + offset
-            leftOff = pilecoords[i] - offset
             pile = []
+            x1 = pilecoords[i][0]
+            x2 = pilecoords[i][1]
             for j in range(len(cards)):
-                if (cards[j][1] <= rightOff) and (cards[j][1] >= leftOff):
+                if (cards[j][1] > x1) and (cards[j][1] < x2):
                     pile.append(cards[j])
             piles.append(pile)
 
