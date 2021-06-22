@@ -105,22 +105,20 @@ class Detector:
         pilecoords = []
         deck = []
         finspaces = []
-
         gnswidth = 0
-        gnsheight = 0
         totalwidth = 0
         totalheight = 0
         cardcount = 0
+
         for i in range(len(cards)):
             if cards[i][0] != 'backside':
                 totalwidth += cards[i][3]
                 totalheight += cards[i][4]
                 cardcount = cardcount + 1
 
-        gnswidth = int(totalwidth / cardcount)
-        gnsheight = int(totalheight / cardcount)
+        if cardcount != 0:
+            gnswidth = int(totalwidth / cardcount)
 
-        deckXYmin = (0, 0)
         deckXYmax = (int(width * 1 / 3), int(height * 1 / 4))
         finspacesXYmin = ((int(width * (1 / 3))) + 100, 0)
         finspacesXYmax = (width, int(height * (1 / 4)))
