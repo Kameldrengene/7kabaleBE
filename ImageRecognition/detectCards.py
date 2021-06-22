@@ -277,17 +277,23 @@ class Detector:
             gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
         if len(deck) != 0:
+            backside = False
             for card in deck:
                 deckCardClass = card[0]  # finds class for card shown from deck
                 # creates Card-objekt with correct values
                 if deckCardClass != 'backside':
                     gameboard.deck.append(Card(typeConverter[deckCardClass[-1]], valueConverter[deckCardClass[0]]))
+                    if backside:
+                        gameboard.deck.append(Card(0, 14))
                     # makes deckpointer point correctly at first index
-                    gameboard.deckPointer = 0
+                    gameboard.deckPointer = len(gameboard.deck) - 1
                     break
                 else:
-                    if len(gameboard.deck) == 0:
-                        gameboard.deckpointer = -1
+                    backside = True
+            if backside and len(gameboard.deck) == 0:
+                gameboard.deck.append(Card(1, 0))
+                gameboard.deck.append(Card(0, 14))
+                gameboard.deckPointer = 1
         else:
             # no card on deck so deckpointer points at nothing
             gameboard.deckPointer = -1

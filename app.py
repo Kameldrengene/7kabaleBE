@@ -76,12 +76,17 @@ def gameboardDecoder(json):
 
     gameboard = Gameboard(0)  # setup a clean gameboard
 
-    # setting deckpointer
-    gameboard.deckPointer = json["deckPointer"]
-
     # setting deck
     for card in json["deck"]:
         gameboard.deck.append(Card(card["type"], card["value"]))
+
+    # deckpointer
+    if gameboard.deck[0].value == 14:
+        gameboard.deckpointer = -1
+    elif gameboard.deck[0].value == 0:
+        gameboard.deckpointer = -1
+    else:
+        gameboard.deckpointer = 0
 
     # setting spaces
     for i in range(len(json["spaces"])):
