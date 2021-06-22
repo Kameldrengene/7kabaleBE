@@ -241,6 +241,7 @@ class Detector:
                          "d": 3}
 
         valueConverter = {"A": 1,
+                          "a": 1,
                           "2": 2,
                           "3": 3,
                           "4": 4,
@@ -251,8 +252,11 @@ class Detector:
                           "9": 9,
                           "1": 10,
                           "J": 11,
+                          "j": 11,
                           "Q": 12,
-                          "K": 13}
+                          "q": 12,
+                          "K": 13,
+                          "k": 13}
 
         gameboard = Gameboard(0)
 
@@ -273,11 +277,17 @@ class Detector:
             gameboard.spaces.append(Pile(shownCards, hiddenCards))
 
         if len(deck) != 0:
-            deckCardClass = deck[0][0]  # finds class for card shown from deck
-            # creates Card-objekt with correct values
-            gameboard.deck.append(Card(typeConverter[deckCardClass[1]], valueConverter[deckCardClass[0]]))
-            # makes deckpointer point correctly at first index
-            gameboard.deckPointer = 0
+            for card in deck:
+                deckCardClass = card[0]  # finds class for card shown from deck
+                # creates Card-objekt with correct values
+                if deckCardClass != 'backside':
+                    gameboard.deck.append(Card(typeConverter[deckCardClass[-1]], valueConverter[deckCardClass[0]]))
+                    # makes deckpointer point correctly at first index
+                    gameboard.deckPointer = 0
+                    break
+                else:
+                    if len(gameboard.deck) == 0:
+                        gameboard.deckpointer = -1
         else:
             # no card on deck so deckpointer points at nothing
             gameboard.deckPointer = -1
