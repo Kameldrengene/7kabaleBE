@@ -303,6 +303,8 @@ class Detector:
             newCard = Card(typeConverter[card[0][-1]], valueConverter[card[0][0]])
 
             # adding the card to the correct pile
+            if len(gameboard.finSpaces[gameboard.finSpaceConverter[newCard.type]]) != 0:
+                gameboard.finSpaces[gameboard.finSpaceConverter[newCard.type]] = []
             gameboard.finSpaces[gameboard.finSpaceConverter[newCard.type]].append(newCard)
 
         # boardConverter adds all missing cards not seen under the found card
