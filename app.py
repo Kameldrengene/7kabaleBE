@@ -16,6 +16,7 @@ import turnGen.SolitareChecker as SolitareChecker
 import turnGen.InstructionConverter as InstructionConverter
 import turnGen.AlgoChooser as AlgoChooser
 import ImageRecognition.detectCards as Detector
+import turnGen.BoardConverter as BoardConverter
 
 app = Flask(__name__)
 api = Api(app)
@@ -122,6 +123,7 @@ class TurnGeneration(Resource):
         * or a true boolean and instructions for the next move
         """
         gameboard = gameboardDecoder(request.get_json())
+        BoardConverter.convertBoard(gameboard)
         check = SolitareChecker.checkSolitare(gameboard)
         if check != "OK":
             # The gameboard is illegal

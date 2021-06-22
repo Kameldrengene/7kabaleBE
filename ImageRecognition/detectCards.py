@@ -306,7 +306,8 @@ class Detector:
             gameboard.finSpaces[gameboard.finSpaceConverter[newCard.type]].append(newCard)
 
         # boardConverter adds all missing cards not seen under the found card
-        BoardConverter.convertBoard(gameboard)
+        # will be done in turnGen
+        # BoardConverter.convertBoard(gameboard)
 
         # gameboard is now the Gameboard-object of the found solitaire
 
