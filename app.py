@@ -77,18 +77,23 @@ def gameboardDecoder(json):
 
     gameboard = Gameboard(0)  # setup a clean gameboard
 
+    print(json["deck"])
+
     # setting deck
     for card in json["deck"]:
         gameboard.deck.append(Card(card["type"], card["value"]))
 
     # deckpointer
-    if gameboard.deck[0].value == 14:
-        gameboard.deckpointer = -1
+    if len(gameboard.deck) == 0:
+        gameboard.deckPointer = -1
+    elif gameboard.deck[0].value == 14:
+        gameboard.deckPointer = -1
     elif gameboard.deck[0].value == 0:
-        gameboard.deckpointer = -1
+        gameboard.deckPointer = -1
     else:
-        gameboard.deckpointer = 0
+        gameboard.deckPointer = 0
 
+    #print(gameboard.deck[gameboard.deck)
     # setting spaces
     for i in range(len(json["spaces"])):
 
@@ -174,7 +179,7 @@ api.add_resource(TurnGeneration, '/turn/')
 api.add_resource(ImgRecon, '/')
 
 
-
+"""
 @app.route('/',methods=['GET'])
 def index():
    return render_template('upload.html')
@@ -186,7 +191,7 @@ def upload_file():
     if uploaded_file.filename != '':
         uploaded_file.save(now.strftime("%d_%m_%Y-%H_%M_%S"))
         return jsonify("Board in her")
-
+"""
 
 
 if __name__ == '__main__':
