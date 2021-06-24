@@ -18,10 +18,10 @@ class Gameboard:
         self.deck = None
         self.deckPointer = None
         self.spaces = None
-        self.finSpaceConverter = {0: "a", #spare
-                                  1: "b",#hjerter
-                                  2: "c",#klør
-                                  3: "d"}#roder
+        self.finSpaceConverter = {0: "a", #spar
+                                  1: "b", #hjerter
+                                  2: "c", #klør
+                                  3: "d"} #roder
 
         if gameboard is None:   # normal init with setup game
             self.setUpGame()

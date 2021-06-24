@@ -119,6 +119,11 @@ def gameboardDecoder(json):
 
 
 class TurnGeneration(Resource):
+    def get(self):
+        # testing gameboard
+        gameboard = Gameboard()
+        return gameboard
+
     def post(self):
         """
         * recives a gameboad in Json

@@ -123,7 +123,7 @@ def convertInstructions(commands=[], gameboard=Gameboard):
         if random.randint(1, 100) == 100:
             msg += "Du er lidt en spade hvis du ikke kan løse kabalen herfra -Lasse 2021\n"
         else:
-            msg += "Alle kort er tilgængelige og spillet er vundet\n"
+            msg += "Alle kort er åbne og kabalen kan med sikkerhed vindes.\n"
 
     if len(msg_list) == 1:
         msg += msg_list[0]
@@ -131,4 +131,12 @@ def convertInstructions(commands=[], gameboard=Gameboard):
         for i in range(len(msg_list)):
             msg += "{0}. {1}\n".format(i+1, msg_list[i])
 
+    won = True
+    for fin in "a","b","c","d":
+        if len(gameboard.finSpaces[fin]) == 0 or gameboard.finSpaces[fin][-1].value != 13:
+            won = False
+            break
+
+    if won:
+        return "Kabalen er vundet!!"
     return msg

@@ -58,7 +58,7 @@ def checkSolitare(gameboard):  # Should return a msg with what is wrong.
                 for card2 in gameboard.spaces[curr].shownCards:
                     if card.value == card2.value and card.type == card2.type:
                         count += 1
-                        if count > 1:  # Error found TODO
+                        if count > 1:  # Error found
                             return "Fejl. {0} {1} findes flere stedet på brættet.".format(typeConverter[card.type], valueConverter[card.value])
 
             # in finspaces
@@ -67,7 +67,7 @@ def checkSolitare(gameboard):  # Should return a msg with what is wrong.
                 lastCardOfType = gameboard.finSpaces[type][-1]
 
                 if lastCardOfType.value >= card.value:
-                    # Error found TODO
+                    # Error found
                     return "Fejl. {0} {1} findes både på brættet og i {0} slutpladsen.".format(typeConverter[card.type], valueConverter[card.value])
 
     # Checking for legal board
@@ -81,9 +81,9 @@ def checkSolitare(gameboard):  # Should return a msg with what is wrong.
             k = pile.shownCards[j]  # simulates king
             q = pile.shownCards[j+1]  # simulates queen
             if k.value != q.value + 1 or not k.isDifferent(q):
-                # Error found in ordering TODO
-                return "Fejl. {0} {1} kan ikke ligge på {2} {3}.".format(typeConverter[q.type], valueConverter[q.value],
-                                                                         typeConverter[k.type], valueConverter[k.value],)
+                # Error found in ordering
+                return "Fejl. {0} {1} kan ikke ligge på {2} {3} i bunke {4}.".format(typeConverter[q.type], valueConverter[q.value],
+                                                                         typeConverter[k.type], valueConverter[k.value], str(i+1))
 
     # Checking for legal amount of hidden cards
     for i in range(7):
@@ -92,7 +92,7 @@ def checkSolitare(gameboard):  # Should return a msg with what is wrong.
             if len(pile.hiddenCards) >= 7-i:
                 count += 1
         if count > i:
-            # Error in amount of hiddencards TODO
+            # Error in amount of hiddencards
             if i == 0:
                 return "Fejl. En eller flere bunker har over 6 lukkede kort."
             else:
