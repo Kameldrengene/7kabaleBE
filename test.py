@@ -50,7 +50,11 @@ class FlaskTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         print(responsedata)
 <<<<<<< HEAD
+<<<<<<< HEAD
         assert responsedata["deckPointer"] == 1
+=======
+        assert responsedata["deckPointer"] == 0
+>>>>>>> 95995df0f245c9d3fefa798ae33a8d4276c40e24
 =======
         assert responsedata["deckPointer"] == 0
 >>>>>>> 95995df0f245c9d3fefa798ae33a8d4276c40e24
